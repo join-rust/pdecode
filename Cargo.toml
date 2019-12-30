@@ -1,5 +1,5 @@
 [package]
-name = "mdecode"
+name = "pdecode"
 version = "0.1.0"
 authors = ["Join.G <chengzhi_gong@leasdata.com>"]
 edition = "2018"
