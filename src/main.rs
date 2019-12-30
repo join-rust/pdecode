@@ -63,14 +63,10 @@ fn rc_base(input: &Vec<u8>) -> String {
     return String::from_utf8(result).unwrap();
 }
 
-fn main() {
-    let input = env::args().nth(1);
-    let mut reader: Box<dyn BufRead> = match input {
-        None => Box::new(BufReader::new(io::stdin())),
-        Some(filename) => Box::new(BufReader::new(File::open(filename).unwrap())),
-    };
+#[inline]
+fn process(reader: &mut dyn BufRead) {
     let mut _line = String::new();
-    while (*reader).read_line(&mut _line).unwrap_or(0) > 0 {
+    while reader.read_line(&mut _line).unwrap_or(0) > 0 {
         let v = decode(&_line.trim_matches(|x| x == '\n' || x == '\r'));
         let json_str = rc_base(&v);
         let _v: Value = match serde_json::from_str(&json_str) {
@@ -87,4 +83,14 @@ fn main() {
         println!("{}", _pretty);
         _line.clear();
     }
+}
+
+fn main() {
+    let input = env::args().nth(1);
+    if let Some(filename) = input {
+        process(&mut BufReader::new(File::open(filename).unwrap()));
+    } else {
+        process(&mut BufReader::new(io::stdin()));
+    }
+    
 }
